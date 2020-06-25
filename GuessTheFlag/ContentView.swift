@@ -15,6 +15,8 @@ struct ContentView: View {
     @State private var showingScore = false
     @State private var scoreTitle = ""
     
+    @State private var score = 0
+    
     var body: some View {
         ZStack {
             LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all)
@@ -38,15 +40,31 @@ struct ContentView: View {
                             .clipShape(Capsule())
                             
                             .overlay(Capsule().stroke(Color.black, lineWidth: 1))
-                        .shadow(color: .black, radius: 2)
+                            .shadow(color: .black, radius: 2)
                     }
                 }
-                
+                VStack{
+                    Text("Your Score: \(score)")
+                        .foregroundColor(.white)
+                        .fontWeight(.black)
+                        .font(.callout)
+                }
+                Button(action: {
+                    self.score = 0
+                }) {
+                    Text("Reset Score")
+                        .fontWeight(.black)
+                        .font(.subheadline)
+                        .padding(10)
+                        .background(Color.red)
+                        .cornerRadius(40)
+                        .foregroundColor(.white)
+                }
                 Spacer()
             }
         }
         .alert(isPresented: $showingScore) {
-            Alert(title: Text(scoreTitle), message: Text("Your score is ???"), dismissButton: .default(Text("Continue")) {
+            Alert(title: Text(scoreTitle), message: Text("Your score is \(score)"), dismissButton: .default(Text("Continue")) {
                 self.askQuestion()
                 })
         }
@@ -54,9 +72,10 @@ struct ContentView: View {
     
     func flagTapped(_ number: Int) {
         if number == correctAnswer {
-            scoreTitle = "Correct"
+            scoreTitle = "That is Correct!"
+            score += 1
         } else {
-            scoreTitle = "Wrong"
+            scoreTitle = "Not quite. \(countries[number]) has that flag."
         }
         
         showingScore = true
